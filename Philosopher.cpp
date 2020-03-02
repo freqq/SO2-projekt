@@ -3,13 +3,16 @@
 //
 
 #include "Philosopher.hpp"
+#include <thread>
+#include <cstdlib>
+#include <unistd.h>
 
 Philosopher::Philosopher(Fork *left_fork, Fork *right_fork) {
-    _left_fork = leftFork;
+    _left_fork = left_fork;
     _right_fork = right_fork;
 }
 
-Philosopher::Philosopher(Fork *left_fork, Fork *right_fork) : Philosopher(left_fork, right_fork) {
+Philosopher::Philosopher(Fork *left_fork, Fork *right_fork, std::string name) : Philosopher(left_fork, right_fork) {
     _name = name;
 }
 
@@ -17,7 +20,7 @@ void Philosopher::think() {
     _state = State::THINKING;
     _progress = 0;
 
-    for(int i=0; I < 10; i++){
+    for(int i=0; i < 10; i++){
         _progress++;
         usleep(350000 + std::rand() % 100000);
     }
