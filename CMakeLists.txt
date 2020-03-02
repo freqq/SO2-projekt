@@ -3,4 +3,4 @@ project(SO2_filozofowie)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(SO2_filozofowie main.cpp)
+add_executable(SO2_filozofowie main.cpp Fork.cpp Philosopher.cpp)
