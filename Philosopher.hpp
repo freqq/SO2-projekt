@@ -29,7 +29,7 @@ private:
     std::unique_lock<std::mutex> uniqueLock;
 
     void setState(unsigned char state);
-    void think(unsigned int seconds);
+    void think(unsigned int deciSeconds);
     void eat();
     void live();
 

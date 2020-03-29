@@ -13,9 +13,9 @@ void Philosopher::setState(unsigned char state) {
     stateMutex.unlock();
 }
 
-void Philosopher::think(unsigned int seconds) {
+void Philosopher::think(unsigned int deciSeconds) {
     setState(1);
-    std::this_thread::sleep_for(std::chrono::seconds(seconds));
+    std::this_thread::sleep_for(std::chrono::milliseconds(deciSeconds * 100));
 }
 
 void Philosopher::eat() {
@@ -45,7 +45,7 @@ Philosopher::Philosopher(unsigned int id, Waiter* waiter) {
 void Philosopher::live() {
     std::random_device rd;
     std::mt19937 mt(rd());
-    std::uniform_int_distribution<int> distribution(1,10);
+    std::uniform_int_distribution<int> distribution(1,100);
 
     uniqueLock = std::unique_lock<std::mutex>(philosopherMutex);
 
