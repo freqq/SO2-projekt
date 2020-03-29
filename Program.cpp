@@ -3,6 +3,7 @@
 //
 
 #include "Program.hpp"
+#include <unistd.h>
 
 Philosopher* Program::philosophers[5];
 std::thread Program::threads[5];
@@ -10,13 +11,13 @@ std::thread Program::threads[5];
 time_t Program::startTime;
 
 void Program::start() {
-    for (unsigned int i = 0; i < 5; i++)
+    for (unsigned int i = 0; i < numberOfPhilosophers; i++)
         Program::philosophers[i] = new Philosopher(i);
 
     std::cout << "Time | ";
-    for (unsigned int i = 0; i < 5; i++) {
+    for (unsigned int i = 0; i < numberOfPhilosophers; i++) {
         std::cout << "Philosopher " << i;
-        if (i < 4)
+        if (i < (numberOfPhilosophers - 1))
             std::cout << " | ";
         else
             std::cout << std::endl;
@@ -29,14 +30,20 @@ void Program::start() {
 
     time(&startTime);
 
-    for (unsigned int i = 0; i < 5; i++)
+    for (unsigned int i = 0; i < numberOfPhilosophers; i++)
         threads[i] = philosophers[i]->spawnThread();
+
+    bool run = true;
+    while(run){
+        run = showPhilosophersStatus();
+        usleep(250000);
+    }
 
     for (auto &thread : threads)
         thread.join();
 }
 
-void Program::showPhilosophersStatus() {
+bool Program::showPhilosophersStatus() {
     time_t currentTime;
     time(&currentTime);
 
@@ -48,7 +55,21 @@ void Program::showPhilosophersStatus() {
     }
     std::cout << "| ";
 
-    for (unsigned int i = 0; i < 5; i++) {
+    bool shouldTerminate = false;
+    for (unsigned int i = 0; i < numberOfPhilosophers; i++) {
+        if (i == 0){
+            if (philosophers[i] -> state == 3)
+                shouldTerminate = true;
+            else
+                shouldTerminate = false;
+        } else {
+            if(shouldTerminate && philosophers[i] -> state == 3)
+                shouldTerminate = true;
+            else
+                shouldTerminate = false;
+        }
+
+
         if (philosophers[i]->state == 3) {
             std::cout << "Dead";
             std::cout << "         ";
@@ -65,9 +86,11 @@ void Program::showPhilosophersStatus() {
             std::cout<<"       ";
         }
 
-        if (i < 4)
+        if (i < (numberOfPhilosophers - 1))
             std::cout << " | ";
         else
             std::cout << std::endl;
     }
+
+    return !shouldTerminate;
 }

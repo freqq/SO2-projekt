@@ -9,7 +9,6 @@
 
 void Philosopher::think(unsigned int seconds) {
     state = 1;
-    Program::showPhilosophersStatus();
     sleep(seconds);
 }
 
@@ -17,7 +16,6 @@ void Philosopher::eat() {
     state = 2;
     leftFork = false;
     rightFork = false;
-    Program::showPhilosophersStatus();
     sleep(2);
     leftFork = true;
     rightFork = true;
@@ -41,7 +39,6 @@ void Philosopher::live() {
     }
 
     state = 3;
-    Program::showPhilosophersStatus();
 }
 
 std::thread Philosopher::spawnThread() {
