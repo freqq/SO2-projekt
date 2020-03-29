@@ -12,12 +12,20 @@
 
 class Waiter;
 
+enum Philosopher_State {
+    NOT_STARTED,
+    THINKING,
+    SLEEPING,
+    EATING,
+    DEAD
+};
+
 class Philosopher {
 private:
     unsigned int id;
 
     std::mutex stateMutex;
-    unsigned char state; // 0 - not started yet, 1 - thinking, 2 - sleeping(waiting for forks), 3 - eating, 4 - dead
+    Philosopher_State state;
 
     std::mutex forksAvailabilityMutex;
     bool forksAvailable;
@@ -28,7 +36,7 @@ private:
     std::condition_variable philosopherSleep;
     std::unique_lock<std::mutex> uniqueLock;
 
-    void setState(unsigned char state);
+    void setState(Philosopher_State state);
     void think(unsigned int deciSeconds);
     void eat();
     void live();

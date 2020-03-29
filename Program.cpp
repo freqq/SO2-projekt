@@ -111,30 +111,30 @@ std::string Program::getThreadsStatus() {
     bool shouldTerminate = false;
     for (unsigned int i = 0; i < numberOfPhilosophers; i++) {
         if (i == 0){
-            if (philosophers[i] -> getState() == 4)
+            if (philosophers[i] -> getState() == Philosopher_State::DEAD)
                 shouldTerminate = true;
             else
                 shouldTerminate = false;
         } else {
-            if(shouldTerminate && philosophers[i] -> getState() == 4)
+            if(shouldTerminate && philosophers[i] -> getState() == Philosopher_State::DEAD)
                 shouldTerminate = true;
             else
                 shouldTerminate = false;
         }
 
-        if (philosophers[i] -> getState() == 4) {
+        if (philosophers[i] -> getState() == Philosopher_State::DEAD) {
             output += "Dead";
             output += "         ";
-        } else if (philosophers[i] -> getState() == 3) {
+        } else if (philosophers[i] -> getState() == Philosopher_State::EATING) {
             output += "Eating";
             output += "       ";
-        } else if (philosophers[i] -> getState() == 2) {
+        } else if (philosophers[i] -> getState() == Philosopher_State::SLEEPING) {
             output += "Waiting";
             output += "      ";
-        } else if (philosophers[i] -> getState() == 1) {
+        } else if (philosophers[i] -> getState() == Philosopher_State::THINKING) {
             output += "Thinking";
             output += "     ";
-        } else if (philosophers[i] -> getState() == 0) {
+        } else if (philosophers[i] -> getState() == Philosopher_State::NOT_STARTED) {
             output += "Not started yet";
         } else {
             output += "Error!";
@@ -144,16 +144,16 @@ std::string Program::getThreadsStatus() {
         output += " | ";
     }
 
-    if (waiter->getState() == 3) {
+    if (waiter -> getState() == Waiter_State::WAITER_DEAD) {
         output += "Dead";
         output += "         ";
-    } else if (waiter->getState() == 2) {
+    } else if (waiter -> getState() == Waiter_State::WAITER_CHECKING_QUEUE) {
         output += "Checking";
         output += "     ";
-    } else if (waiter->getState() == 1) {
+    } else if (waiter -> getState() == Waiter_State::WAITER_SLEEPING) {
         output += "Sleeping";
         output += "     ";
-    } else if (waiter->getState() == 0)
+    } else if (waiter -> getState() == Waiter_State::WAITER_NOT_STARTED)
         output += "Not yet start";
     else {
         output += "Error!";

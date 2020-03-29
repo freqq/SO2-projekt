@@ -9,6 +9,13 @@
 #include <vector>
 #include <condition_variable>
 
+enum Waiter_State {
+    WAITER_NOT_STARTED,
+    WAITER_SLEEPING,
+    WAITER_CHECKING_QUEUE,
+    WAITER_DEAD
+};
+
 class Waiter {
 private:
     std::mutex forksQueueMutex;
@@ -16,14 +23,14 @@ private:
     std::vector<Philosopher*> queue;
 
     std::mutex stateMutex;
-    unsigned char state; // 0 - not started yet; 1 - sleeping; 2 - checking queue; 3 - dead
+    Waiter_State state;
     std::condition_variable waiterSleep;
     std::mutex waiterMutex;
 
     bool terminate;
     int numberOfPhilosophers;
     bool checkQueue;
-    void setState(unsigned char state);
+    void setState(Waiter_State state);
 
 public:
     Waiter(int numberOfPhilosophers);

@@ -4,7 +4,7 @@
 
 #include "Waiter.hpp"
 
-void Waiter::setState(unsigned char state) {
+void Waiter::setState(Waiter_State state) {
     stateMutex.lock();
         Waiter::state = state;
     stateMutex.unlock();
@@ -22,11 +22,11 @@ Waiter::Waiter(int numberOfPhilosophers) {
 void Waiter::start() {
     std::unique_lock<std::mutex> uniqueLock(waiterMutex);
 
-    setState(1);
+    setState(Waiter_State::WAITER_SLEEPING);
     while (!(terminate && queue.size() == 0)) {
         waiterSleep.wait(uniqueLock, [this] {return checkQueue;});
         forksQueueMutex.lock();
-        setState(2);
+        setState(Waiter_State::WAITER_CHECKING_QUEUE);
         checkQueue = false;
         int i = 0;
         for (auto &philosopher : queue) {
@@ -44,10 +44,10 @@ void Waiter::start() {
             }
             i++;
         }
-        setState(1);
+        setState(Waiter_State::WAITER_SLEEPING);
         forksQueueMutex.unlock();
     }
-    setState(3);
+    setState(Waiter_State::WAITER_DEAD);
 }
 
 void Waiter::askForForks(Philosopher *philosopher) {

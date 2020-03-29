@@ -7,27 +7,27 @@
 #include <random>
 #include <chrono>
 
-void Philosopher::setState(unsigned char state) {
+void Philosopher::setState(Philosopher_State state) {
     stateMutex.lock();
         Philosopher::state = state;
     stateMutex.unlock();
 }
 
 void Philosopher::think(unsigned int deciSeconds) {
-    setState(1);
+    setState(Philosopher_State::THINKING);
     std::this_thread::sleep_for(std::chrono::milliseconds(deciSeconds * 100));
 }
 
 void Philosopher::eat() {
     forksAvailabilityMutex.lock();
-        setState(2);
+        setState(Philosopher_State::SLEEPING);
         waiter -> askForForks(this);
     forksAvailabilityMutex.unlock();
 
     philosopherSleep.wait(uniqueLock, [this]{return forksAvailable;});
 
     forksAvailabilityMutex.lock();
-        setState(3);
+        setState(Philosopher_State::EATING);
         std::this_thread::sleep_for(std::chrono::seconds(2));
         forksAvailable = false;
         waiter -> returnForks(this);
@@ -39,7 +39,7 @@ Philosopher::Philosopher(unsigned int id, Waiter* waiter) {
     this -> waiter = waiter;
     forksAvailable = false;
     terminate = false;
-    setState(0);
+    setState(Philosopher_State::NOT_STARTED);
 }
 
 void Philosopher::live() {
@@ -54,7 +54,7 @@ void Philosopher::live() {
         eat();
     }
 
-    setState(4);
+    setState(Philosopher_State::DEAD);
 }
 
 std::thread Philosopher::spawnThread() {
