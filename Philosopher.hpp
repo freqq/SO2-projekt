@@ -15,15 +15,17 @@ class Philosopher {
 private:
     unsigned int id;
 
-    std::mutex * stateMutex;
+    std::mutex stateMutex;
     unsigned char state; // 0 - not started yet, 1 - thinking, 2 - sleeping(waiting for forks), 3 - eating, 4 - dead
 
+    std::mutex forksAvailabilityMutex;
     bool forksAvailable;
+    bool terminate;
     Waiter* waiter;
 
-    std::mutex* philosopherMutex;
-    std::condition_variable* philosopherSleep;
-    std::unique_lock<std::mutex>* uniqueLock;
+    std::mutex philosopherMutex;
+    std::condition_variable philosopherSleep;
+    std::unique_lock<std::mutex> uniqueLock;
 
     void setState(unsigned char state);
     void think(unsigned int seconds);
@@ -32,10 +34,13 @@ private:
 
 public:
     Philosopher(unsigned int id, Waiter* waiter);
-    std::thread spawnThread();
-    unsigned char getState() const;
-    unsigned int getId() const;
+
     void wakeUp();
+    void setTerminate(bool terminate);
+
+    std::thread spawnThread();
+    unsigned char getState();
+    unsigned int getId();
 };
 
 
