@@ -5,11 +5,12 @@
 #ifndef SO2_FILOZOFOWIE_PHILOSOPHER_HPP
 #define SO2_FILOZOFOWIE_PHILOSOPHER_HPP
 
-#include "Waiter.hpp"
 #include <iostream>
 #include <thread>
 #include <condition_variable>
 #include <mutex>
+
+class Waiter;
 
 class Philosopher {
 private:

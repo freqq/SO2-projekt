@@ -82,7 +82,7 @@ bool Program::showThreadsStatus() {
             std::cout << "       ";
         } else if (philosophers[i] -> getState() == 2) {
             std::cout << "Waiting";
-            std::cout << "       ";
+            std::cout << "      ";
         } else if (philosophers[i] -> getState() == 1) {
             std::cout << "Thinking";
             std::cout << "     ";
