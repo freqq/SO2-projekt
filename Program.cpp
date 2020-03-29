@@ -10,10 +10,8 @@ std::thread Program::threads[5];
 time_t Program::startTime;
 
 void Program::start() {
-    for (unsigned int i = 0; i < 5; i++) {
+    for (unsigned int i = 0; i < 5; i++)
         Program::philosophers[i] = new Philosopher(i);
-    }
-
 
     std::cout << "Time | ";
     for (unsigned int i = 0; i < 5; i++) {
@@ -23,23 +21,19 @@ void Program::start() {
         else
             std::cout << std::endl;
     }
-    for (unsigned int i = 0; i < 77; i++) {
+
+    for (unsigned int i = 0; i < 77; i++)
         std::cout << "-";
-    }
+
     std::cout << std::endl;
 
     time(&startTime);
 
-    for (unsigned int i = 0; i < 5; i++) {
+    for (unsigned int i = 0; i < 5; i++)
         threads[i] = philosophers[i]->spawnThread();
-    }
 
-    for (unsigned int i = 0; i < 5; i++) {
-        threads[i].join();
-        for (auto &thread : threads) {
-            thread.join();
-        }
-    }
+    for (auto &thread : threads)
+        thread.join();
 }
 
 void Program::showPhilosophersStatus() {
@@ -64,6 +58,7 @@ void Program::showPhilosophersStatus() {
             std::cout << "      ";
             std::cout << "     ";
         }
+
         if (i < 4)
             std::cout << " | ";
         else
