@@ -1,10 +1,8 @@
 #include <iostream>
-
-using namespace std;
+#include <thread>
 
 int main() {
-
-    cout << "hehe";
+    std::cout << "press esc to exit!" << std::endl;
 
     return 0;
 }
