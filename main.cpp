@@ -1,8 +1,7 @@
-#include <iostream>
-#include <thread>
+#include "Program.hpp"
 
 int main() {
-    std::cout << "press esc to exit!" << std::endl;
+    Program::start();
 
     return 0;
 }

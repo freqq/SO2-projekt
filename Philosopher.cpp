@@ -3,17 +3,24 @@
 //
 
 #include "Philosopher.hpp"
+#include "Program.hpp"
 #include <random>
 #include <unistd.h>
 
 void Philosopher::think(unsigned int seconds) {
     state = false;
+    Program::showPhilosophersStatus();
     sleep(seconds);
 }
 
 void Philosopher::eat() {
     state = true;
+    leftFork = false;
+    rightFork = false;
+    Program::showPhilosophersStatus();
     sleep(2);
+    leftFork = true;
+    rightFork = true;
 }
 
 Philosopher::Philosopher(unsigned int id) {
@@ -31,4 +38,8 @@ void Philosopher::live() {
         think((unsigned int) distribution(mt));
         eat();
     }
+}
+
+std::thread Philosopher::spawnThread() {
+    return std::thread([this] {this -> live();});
 }

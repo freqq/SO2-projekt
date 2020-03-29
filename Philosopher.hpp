@@ -5,6 +5,8 @@
 #ifndef SO2_FILOZOFOWIE_PHILOSOPHER_HPP
 #define SO2_FILOZOFOWIE_PHILOSOPHER_HPP
 
+#include <iostream>
+#include <thread>
 
 class Philosopher {
 private:
@@ -13,15 +15,15 @@ private:
     bool leftFork;
     bool rightFork;
 
-    bool state;
-
     void think(unsigned int seconds);
     void eat();
 
 public:
-    Philosopher(unsigned int id);
+    bool state;
 
+    Philosopher(unsigned int id);
     void live();
+    std::thread spawnThread();
 };
 
 
