@@ -3,47 +3,38 @@
 //
 
 #include "Program.hpp"
-#include <unistd.h>
+#include <chrono>
+#include <vector>
 
-Philosopher* Program::philosophers[5];
-std::thread Program::threads[5];
+int Program::numberOfPhilosophers = 5;
+
+std::vector<Philosopher> Program::philosophers;
+std::vector<std::thread> Program::threads;
 
 time_t Program::startTime;
 
 void Program::start() {
-    for (unsigned int i = 0; i < numberOfPhilosophers; i++)
-        Program::philosophers[i] = new Philosopher(i);
-
-    std::cout << "Time | ";
     for (unsigned int i = 0; i < numberOfPhilosophers; i++) {
-        std::cout << "Philosopher " << i;
-        if (i < (numberOfPhilosophers - 1))
-            std::cout << " | ";
-        else
-            std::cout << std::endl;
+        philosophers.emplace_back(i);
     }
 
-    for (unsigned int i = 0; i < 77; i++)
-        std::cout << "-";
-
-    std::cout << std::endl;
-
+    showHeader();
     time(&startTime);
 
-    for (unsigned int i = 0; i < numberOfPhilosophers; i++)
-        threads[i] = philosophers[i]->spawnThread();
+    for (auto &philosopher : philosophers)
+        threads.emplace_back(philosopher.spawnThread());
 
     bool run = true;
     while(run){
-        run = showPhilosophersStatus();
-        usleep(250000);
+        run = showThreadsStatus();
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
 
     for (auto &thread : threads)
         thread.join();
 }
 
-bool Program::showPhilosophersStatus() {
+bool Program::showThreadsStatus() {
     time_t currentTime;
     time(&currentTime);
 
@@ -58,28 +49,27 @@ bool Program::showPhilosophersStatus() {
     bool shouldTerminate = false;
     for (unsigned int i = 0; i < numberOfPhilosophers; i++) {
         if (i == 0){
-            if (philosophers[i] -> state == 3)
+            if (philosophers[i].getState() == 3)
                 shouldTerminate = true;
             else
                 shouldTerminate = false;
         } else {
-            if(shouldTerminate && philosophers[i] -> state == 3)
+            if(shouldTerminate && philosophers[i].getState() == 3)
                 shouldTerminate = true;
             else
                 shouldTerminate = false;
         }
 
-
-        if (philosophers[i]->state == 3) {
+        if (philosophers[i].getState() == 3) {
             std::cout << "Dead";
             std::cout << "         ";
-        } else if (philosophers[i]->state == 2) {
+        } else if (philosophers[i].getState() == 2) {
             std::cout << "Eating";
             std::cout << "       ";
-        } else if (philosophers[i]->state == 1) {
+        } else if (philosophers[i].getState() == 1) {
             std::cout<<"Thinking";
             std::cout<<"     ";
-        } else if (philosophers[i]->state == 0) {
+        } else if (philosophers[i].getState() == 0) {
             std::cout << "Not started yet";
         } else {
             std::cout<<"Error!";
@@ -93,4 +83,21 @@ bool Program::showPhilosophersStatus() {
     }
 
     return !shouldTerminate;
+}
+
+void Program::showHeader() {
+    std::cout << "Time | ";
+    for (unsigned int i = 0; i < numberOfPhilosophers; i++) {
+        std::cout << "Philosopher " <<i;
+
+        if (i < numberOfPhilosophers - 1)
+            std::cout <<" | " ;
+        else
+            std::cout << std::endl;
+    }
+
+    for (unsigned int i = 0; i < 84; i++)
+        std::cout << "-";
+
+    std::cout << std::endl;
 }

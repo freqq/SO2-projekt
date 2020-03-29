@@ -5,21 +5,23 @@
 #ifndef SO2_FILOZOFOWIE_PROGRAM_HPP
 #define SO2_FILOZOFOWIE_PROGRAM_HPP
 
-#define numberOfPhilosophers 5
-
+#include "Philosopher.hpp"
 #include <thread>
 #include <iostream>
-#include "Philosopher.hpp"
+#include <vector>
 
 class Program {
 private:
-    static Philosopher* philosophers[numberOfPhilosophers];
-    static std::thread threads[numberOfPhilosophers];
+    static int numberOfPhilosophers;
+    static std::vector<Philosopher> philosophers;
+    static std::vector<std::thread> threads;
     static time_t startTime;
+
+    static void showHeader();
+    static bool showThreadsStatus();
 
 public:
     static void start();
-    static bool showPhilosophersStatus();
 };
 
 

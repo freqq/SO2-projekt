@@ -7,23 +7,27 @@
 
 #include <iostream>
 #include <thread>
+#include <mutex>
 
 class Philosopher {
 private:
     unsigned int id;
 
-    bool leftFork;
+    bool leftFork; // false if used, true if free
     bool rightFork;
 
+    std::mutex * stateMutex;
+    unsigned char state; // 0 - not started yet, 1 - thinking, 2 - sleeping(waiting for forks), 3 - eating, 4 - dead
+
+    void setState(unsigned char state);
     void think(unsigned int seconds);
     void eat();
+    void live();
 
 public:
-    unsigned char state; // 0 - not started yet, 1 - thinking, 2 - eating, 3 - dead
-
     Philosopher(unsigned int id);
-    void live();
     std::thread spawnThread();
+    unsigned char getState() const;
 };
 
 

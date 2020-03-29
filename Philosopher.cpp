@@ -5,27 +5,35 @@
 #include "Philosopher.hpp"
 #include "Program.hpp"
 #include <random>
-#include <unistd.h>
+#include <chrono>
+
+void Philosopher::setState(unsigned char state) {
+    stateMutex->lock();
+    Philosopher::state = state;
+    stateMutex->unlock();
+}
 
 void Philosopher::think(unsigned int seconds) {
-    state = 1;
-    sleep(seconds);
+    setState(1);
+    std::this_thread::sleep_for(std::chrono::seconds(seconds));
 }
 
 void Philosopher::eat() {
-    state = 2;
+    setState(2);
     leftFork = false;
     rightFork = false;
-    sleep(2);
+    setState(3);
+    std::this_thread::sleep_for(std::chrono::seconds(2));
     leftFork = true;
     rightFork = true;
-    state = 0;
 }
 
 Philosopher::Philosopher(unsigned int id) {
     this->id = id;
     leftFork = true;
     rightFork = true;
+    stateMutex = new std::mutex;
+    setState(0);
 }
 
 void Philosopher::live() {
@@ -38,9 +46,13 @@ void Philosopher::live() {
         eat();
     }
 
-    state = 3;
+    setState(4);
 }
 
 std::thread Philosopher::spawnThread() {
     return std::thread([this] {this -> live();});
+}
+
+unsigned char Philosopher::getState() const {
+    return state;
 }
