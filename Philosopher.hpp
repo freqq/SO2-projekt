@@ -19,7 +19,7 @@ private:
     void eat();
 
 public:
-    bool state;
+    unsigned char state; // 0 - not started yet, 1 - thinking, 2 - eating, 3 - dead
 
     Philosopher(unsigned int id);
     void live();

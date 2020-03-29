@@ -8,19 +8,20 @@
 #include <unistd.h>
 
 void Philosopher::think(unsigned int seconds) {
-    state = false;
+    state = 1;
     Program::showPhilosophersStatus();
     sleep(seconds);
 }
 
 void Philosopher::eat() {
-    state = true;
+    state = 2;
     leftFork = false;
     rightFork = false;
     Program::showPhilosophersStatus();
     sleep(2);
     leftFork = true;
     rightFork = true;
+    state = 0;
 }
 
 Philosopher::Philosopher(unsigned int id) {
@@ -38,6 +39,9 @@ void Philosopher::live() {
         think((unsigned int) distribution(mt));
         eat();
     }
+
+    state = 3;
+    Program::showPhilosophersStatus();
 }
 
 std::thread Philosopher::spawnThread() {

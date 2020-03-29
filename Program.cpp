@@ -49,14 +49,20 @@ void Program::showPhilosophersStatus() {
     std::cout << "| ";
 
     for (unsigned int i = 0; i < 5; i++) {
-        if (philosophers[i]->state) {
+        if (philosophers[i]->state == 3) {
+            std::cout << "Dead";
+            std::cout << "         ";
+        } else if (philosophers[i]->state == 2) {
             std::cout << "Eating";
-            std::cout << "        ";
             std::cout << "       ";
+        } else if (philosophers[i]->state == 1) {
+            std::cout<<"Thinking";
+            std::cout<<"     ";
+        } else if (philosophers[i]->state == 0) {
+            std::cout << "Not started yet";
         } else {
-            std::cout << "Thinking";
-            std::cout << "      ";
-            std::cout << "     ";
+            std::cout<<"Error!";
+            std::cout<<"       ";
         }
 
         if (i < 4)
