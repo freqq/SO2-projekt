@@ -8,4 +8,4 @@ if (CMAKE_BUILD_TYPE MATCHES "Rel")
     set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static -lpthread")
 endif (CMAKE_BUILD_TYPE MATCHES "Rel")
 
-add_executable(SO2_filozofowie main.cpp Program.cpp Program.hpp Philosopher.cpp Philosopher.hpp)
+add_executable(SO2_filozofowie main.cpp Program.cpp Program.hpp Philosopher.cpp Philosopher.hpp Waiter.cpp Waiter.hpp)

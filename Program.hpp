@@ -6,6 +6,7 @@
 #define SO2_FILOZOFOWIE_PROGRAM_HPP
 
 #include "Philosopher.hpp"
+#include "Waiter.hpp"
 #include <thread>
 #include <iostream>
 #include <vector>

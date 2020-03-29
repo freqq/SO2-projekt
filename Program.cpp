@@ -14,8 +14,10 @@ std::vector<std::thread> Program::threads;
 time_t Program::startTime;
 
 void Program::start() {
+    Waiter waiter(numberOfPhilosophers);
+
     for (unsigned int i = 0; i < numberOfPhilosophers; i++) {
-        philosophers.emplace_back(i);
+        philosophers.emplace_back(i, &waiter);
     }
 
     showHeader();
@@ -29,6 +31,8 @@ void Program::start() {
         run = showThreadsStatus();
         std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
+
+    waiter.setTerminate(true);
 
     for (auto &thread : threads)
         thread.join();
