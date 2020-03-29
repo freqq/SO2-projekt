@@ -5,6 +5,7 @@
 #include "Program.hpp"
 #include "WaitForInput.hpp"
 #include <chrono>
+#include <fstream>
 #include <vector>
 
 int Program::numberOfPhilosophers = 5;
@@ -16,14 +17,47 @@ std::vector<std::thread> Program::threads;
 
 time_t Program::startTime;
 
+bool Program::fileExport = false;
+bool Program::shouldTerminate = false;
+
 void Program::start() {
+    std::cout << "Save simulation output to file? [Y/N]: ";
+    char tempChar = 'n';
+    std::cin >> tempChar;
+
+    if (tempChar == 'Y' || tempChar == 'y')
+        fileExport = true;
+
+    std::fstream* file;
+
+    if(fileExport){
+        std::string path = std::to_string(time(0));
+        path += "-DiningPhilosophersProblem-" + std::to_string(numberOfPhilosophers) + ".txt";
+
+        file = new std::fstream(path, std::fstream::out);
+
+        if (!file->is_open()) {
+            std::cout << "There was a problem with creating a file. "
+                         "The app will continue without saving the output into a file." << std::endl;
+        } else {
+            std::cout << "Saving a simulation output to: " << path << std::endl;
+        }
+    }
+
+
     std::thread waiterThread = waiter -> spawnThread();
 
     for (unsigned int i = 0; i < numberOfPhilosophers; i++) {
         philosophers.push_back(new Philosopher(i, waiter));
     }
 
-    showHeader();
+    std::string buffer = "";
+    buffer = getHeader();
+
+    std::cout << buffer;
+    if(fileExport)
+        (*file) << buffer;
+
     time(&startTime);
 
     for (auto &philosopher : philosophers)
@@ -32,9 +66,13 @@ void Program::start() {
     WaitForInput waitForInput(&philosophers);
     std::thread waitThread = waitForInput.spawnThread();
 
-    bool run = true;
-    while(run){
-        run = showThreadsStatus();
+    while(!shouldTerminate){
+        buffer = getThreadsStatus();
+
+        std::cout << buffer;
+        if(fileExport)
+            (*file) << buffer;
+
         std::this_thread::sleep_for(std::chrono::milliseconds(250));
     }
 
@@ -46,19 +84,29 @@ void Program::start() {
 
     waiter -> wakeUp();
     waiterThread.join();
+
+    buffer = "Simulation over. \n";
+
+    std::cout << buffer;
+    if(fileExport){
+        (*file) << buffer;
+        file -> close();
+    }
 }
 
-bool Program::showThreadsStatus() {
+std::string Program::getThreadsStatus() {
+    std::string output = "";
+
     time_t currentTime;
     time(&currentTime);
 
     std::string diffTime = std::to_string((int) difftime(currentTime, startTime));
 
-    std::cout << diffTime;
+    output += diffTime;
     for (int i = 0; i < (5 - diffTime.length()); i++) {
-        std::cout << " ";
+        output += " ";
     }
-    std::cout << "| ";
+    output += "| ";
 
     bool shouldTerminate = false;
     for (unsigned int i = 0; i < numberOfPhilosophers; i++) {
@@ -75,84 +123,88 @@ bool Program::showThreadsStatus() {
         }
 
         if (philosophers[i] -> getState() == 4) {
-            std::cout << "Dead";
-            std::cout << "         ";
+            output += "Dead";
+            output += "         ";
         } else if (philosophers[i] -> getState() == 3) {
-            std::cout << "Eating";
-            std::cout << "       ";
+            output += "Eating";
+            output += "       ";
         } else if (philosophers[i] -> getState() == 2) {
-            std::cout << "Waiting";
-            std::cout << "      ";
+            output += "Waiting";
+            output += "      ";
         } else if (philosophers[i] -> getState() == 1) {
-            std::cout << "Thinking";
-            std::cout << "     ";
+            output += "Thinking";
+            output += "     ";
         } else if (philosophers[i] -> getState() == 0) {
-            std::cout << "Not started yet";
+            output += "Not started yet";
         } else {
-            std::cout << "Error!";
-            std::cout << "       ";
+            output += "Error!";
+            output += "       ";
         }
 
-        std::cout << " | ";
+        output += " | ";
     }
 
     if (waiter->getState() == 3) {
-        std::cout << "Dead";
-        std::cout << "         ";
+        output += "Dead";
+        output += "         ";
     } else if (waiter->getState() == 2) {
-        std::cout << "Checking";
-        std::cout << "     ";
+        output += "Checking";
+        output += "     ";
     } else if (waiter->getState() == 1) {
-        std::cout << "Sleeping";
-        std::cout << "     ";
+        output += "Sleeping";
+        output += "     ";
     } else if (waiter->getState() == 0)
-        std::cout << "Not yet start";
+        output += "Not yet start";
     else {
-        std::cout << "Error!";
-        std::cout << "       ";
+        output += "Error!";
+        output += "       ";
     }
 
-    std::cout << " | ";
+    output += " | ";
     std::vector<bool> forks = waiter->getForks();
 
     for(int i = 0; i < forks.size(); i++) {
         if (forks[i]) {
-            std::cout << "Free";
-            std::cout << "    ";
+            output += "Free";
+            output += "    ";
         } else if (!forks[i]) {
-            std::cout << "Occupied";
-            std::cout << "";
+            output += "Occupied";
+            output += "";
         } else {
-            std::cout << "Error!";
-            std::cout << "  ";
+            output += "Error!";
+            output += "  ";
         }
         if (i < numberOfPhilosophers - 1)
-            std::cout << " | ";
+            output += " | ";
         else
-            std::cout << std::endl;
+            output += "\n";
     }
 
-    return !shouldTerminate;
+    return output;
 }
 
-void Program::showHeader() {
-    std::cout << "Time | ";
+std::string Program::getHeader() {
+    std::string output = "";
+
+    output += "Time | ";
     for (unsigned int i = 0; i < numberOfPhilosophers; i++) {
-        std::cout << "Philosopher " << i;
-        std::cout << " | ";
+        output += "Philosopher " + std::to_string(i);
+        output += " | ";
     }
 
     std::cout<<"Waiter       "<<" | ";
     for (unsigned int i = 0; i < numberOfPhilosophers; i++) {
-        std::cout << "Fork " << i << "  ";
+        output += "Fork " + std::to_string(i) + "  ";
         if (i < numberOfPhilosophers - 1)
-            std::cout << " | ";
+            output += " | ";
         else
-            std::cout << std::endl;
+            output += "\n";
     }
 
     for (unsigned int i = 0; i < 155; i++)
-        std::cout << "-";
+        output += "-";
 
-    std::cout << std::endl;
+    output += "\n";
+
+    return output;
 }

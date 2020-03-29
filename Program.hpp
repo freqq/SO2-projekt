@@ -20,8 +20,11 @@ private:
     static std::vector<std::thread> threads;
     static time_t startTime;
 
-    static void showHeader();
-    static bool showThreadsStatus();
+    static bool fileExport;
+    static bool shouldTerminate;
+
+    static std::string getHeader();
+    static std::string getThreadsStatus();
 
 public:
     static void start();
