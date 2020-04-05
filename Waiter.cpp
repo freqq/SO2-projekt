@@ -13,9 +13,10 @@ void Waiter::setState(Waiter_State state) {
 Waiter::Waiter(int numberOfPhilosophers) {
     terminate = false;
     checkQueue = false;
-    this->numberOfPhilosophers = numberOfPhilosophers;
+    this -> numberOfPhilosophers = numberOfPhilosophers;
+    this -> state = Waiter_State::WAITER_NOT_STARTED;
 
-    for(int i = 0; i < numberOfPhilosophers; i++)
+    for (int i = 0; i < numberOfPhilosophers; i++)
         forks.push_back(true);
 }
 
@@ -23,18 +24,21 @@ void Waiter::start() {
     std::unique_lock<std::mutex> uniqueLock(waiterMutex);
 
     setState(Waiter_State::WAITER_SLEEPING);
-    while (!(terminate && queue.size() == 0)) {
+    while (!(terminate && queue.empty())) {
         waiterSleep.wait(uniqueLock, [this] {return checkQueue;});
         forksQueueMutex.lock();
         setState(Waiter_State::WAITER_CHECKING_QUEUE);
         checkQueue = false;
         int i = 0;
+
         for (auto &philosopher : queue) {
             int id = philosopher->getId();
             int left = id;
             int right = id + 1;
+
             if (right == numberOfPhilosophers)
                 right = 0;
+
             if (forks[left] && forks[right]) {
                 forks[left] = false;
                 forks[right] = false;
@@ -42,11 +46,14 @@ void Waiter::start() {
                 queue.erase(queue.begin() + i);
                 i--;
             }
+
             i++;
         }
+
         setState(Waiter_State::WAITER_SLEEPING);
         forksQueueMutex.unlock();
     }
+
     setState(Waiter_State::WAITER_DEAD);
 }
 
@@ -77,6 +84,7 @@ void Waiter::returnForks(Philosopher *philosopher) {
 
 void Waiter::setTerminate(bool terminate) {
     Waiter::terminate = terminate;
+    std::cout << "Setting WAITER state = DEAD ... " << std::endl;
 }
 
 std::thread Waiter::spawnThread() {

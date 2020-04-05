@@ -6,13 +6,14 @@
 
 void WaitForInput::wait() {
     char c = 0;
-    while (c!= 'q') {
+    while (c != 'q')
         scanf(" %c", &c);
-    }
 
-    for (int i = 0; i < philosophers->size(); i++){
-        Philosopher* philosopher = (*philosophers)[i];
+    int i = 0;
+    for (auto &philosopher : *philosophers) {
         philosopher -> setTerminate(true);
+        std::cout << "Setting PHILOSOPHER " << i << " state = DEAD ... " << std::endl;
+        i++;
     }
 }
 

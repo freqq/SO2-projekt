@@ -13,12 +13,12 @@
 
 class Program {
 private:
-    static int numberOfPhilosophers;
+    static time_t startTime;
 
     static Waiter* waiter;
+
     static std::vector<Philosopher*> philosophers;
     static std::vector<std::thread> threads;
-    static time_t startTime;
 
     static bool fileExport;
     static bool shouldTerminate;

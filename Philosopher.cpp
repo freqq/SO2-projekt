@@ -39,7 +39,7 @@ Philosopher::Philosopher(unsigned int id, Waiter* waiter) {
     this -> waiter = waiter;
     forksAvailable = false;
     terminate = false;
-    setState(Philosopher_State::NOT_STARTED);
+    this -> state = Philosopher_State::NOT_STARTED;
 }
 
 void Philosopher::live() {

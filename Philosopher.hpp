@@ -25,14 +25,16 @@ private:
     unsigned int id;
 
     std::mutex stateMutex;
-    Philosopher_State state;
-
     std::mutex forksAvailabilityMutex;
-    bool forksAvailable;
-    bool terminate;
+    std::mutex philosopherMutex;
+
     Waiter* waiter;
 
-    std::mutex philosopherMutex;
+    Philosopher_State state;
+
+    bool forksAvailable;
+    bool terminate;
+
     std::condition_variable philosopherSleep;
     std::unique_lock<std::mutex> uniqueLock;
 

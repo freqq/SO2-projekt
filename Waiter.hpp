@@ -19,17 +19,19 @@ enum Waiter_State {
 class Waiter {
 private:
     std::mutex forksQueueMutex;
+    std::mutex stateMutex;
+    std::mutex waiterMutex;
+
     std::vector<bool> forks; // FALSE - used, TRUE - free
     std::vector<Philosopher*> queue;
 
-    std::mutex stateMutex;
     Waiter_State state;
     std::condition_variable waiterSleep;
-    std::mutex waiterMutex;
 
     bool terminate;
     int numberOfPhilosophers;
     bool checkQueue;
+
     void setState(Waiter_State state);
 
 public:
